@@ -119,9 +119,9 @@ if [ ${_INSTALL_POETRY}=="1" ]; then
 fi
 
 echo "install neovim"
-sudo add-apt-repository ppa:neovim-ppa/stable
-sudo apt-get update
-sudo apt-get install -y neovim
+cd ~/download
+wget https://download.fastgit.org/neovim/neovim/releases/download/nightly/nvim-linux64.deb
+sudo apt-get install -y ./nvim-linux64.deb
 
 echo "initiallize ezsh"
 git clone https://github.com/jotyGill/ezsh.git /tmp/ezsh
