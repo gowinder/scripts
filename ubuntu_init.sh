@@ -1,7 +1,7 @@
 #!/bin/bash
 
-# _NEW_USER=go
-_INSTALL_V2RAY=false
+_NEW_USER=go
+_INSTALL_V2RAY=true
 _DEFAULT_V2RAY_CONFIG=~/download/v2ray/config.json
 _ORING_APT_REPO=archive.ubuntu.com
 _APT_MIRROR=mirrors.ustc.edu.cn
@@ -63,13 +63,43 @@ echo "install nodejs 14"
 curl -fsSL https://deb.nodesource.com/setup_14.x | sudo -E bash -
 sudo apt-get install -y nodejs
 
-if [ ${_INSTALL_V2RAY} == "1" ]; then
+echo "change timezone to ${_TIMEZONE}"
+sudo timedatectl set-timezone ${_TIMEZONE}
+
+echo "install docker"
+curl -Ssl https://get.docker.com | sudo sh
+sudo usermod -aG docker ${_NEW_USER}
+
+echo "install docker compose"
+pip install docker-compose
+
+if [ ${_INSTALL_CONDA} == "true" ]; then
+    echo -e "install conda version=${_CONDA_VER}"
+    cd ~/download
+    wget "https://repo.continuum.io/miniconda/Miniconda3-${_CONDA_VER}-Linux-x86_64.sh"
+    bash "Miniconda3-${_CONDA_VER}-Linux-x86_64.sh" -b -p ~/miniconda3
+    # rm "Miniconda3-${_CONDA_VER}-Linux-x86_64.sh"
+    # conda update -y conda
+    # conda init bash
+fi
+
+if [ ${_INSTALL_POETRY} == "true" ]; then
+    echo -e "install poetry version=${_POETRY_VER}"
+    pip install poetry==${_POETRY_VER}
+fi
+
+echo "install neovim"
+cd ~/download
+wget https://download.fastgit.org/neovim/neovim/releases/download/nightly/nvim-linux64.deb
+sudo apt-get install -y ./nvim-linux64.deb
+
+if [ ${_INSTALL_V2RAY} == "true" ]; then
     echo "install v2ray"
     cd download
     wget https://download.fastgit.org/v2fly/v2ray-core/releases/download/v5.0.8/v2ray-linux-64.zip
     unzip v2ray-linux-64.zip -d v2ray
     read -p "input config.json file, or just enter for ~/download/v2ray/config.json" DIR
-    if [ $DIR == "" ]; then
+    if [ -z $DIR ]; then
         DIR=$_DEFAULT_V2RAY_CONFIG
     fi
     echo -e "will use config file: ${DIR}"
@@ -93,40 +123,24 @@ fi
 
 cd ~
 
-echo "change timezone to ${_TIMEZONE}"
-sudo timedatectl set-timezone ${_TIMEZONE}
-
-echo "install docker"
-curl -Ssl https://get.docker.com | sudo sh
-sudo usermod -aG docker ${_NEW_USER}
-
-echo "install docker compose"
-pip install docker-compose
-
-if [ ${_INSTALL_CONDA} == "true" ]; then
-    echo -e "install conda version=${_CONDA_VER}"
-    cd ~/download
-    wget "https://repo.continuum.io/miniconda/Miniconda3-${_CONDA_VER}-Linux-x86_64.sh"
-    bash "Miniconda3-${_CONDA_VER}-Linux-x86_64.sh"
-    rm "Miniconda3-${_CONDA_VER}-Linux-x86_64.sh"
-    conda update -y conda
-    conda init bash
-fi
-
-if [ ${_INSTALL_POETRY} == "true" ]; then
-    echo -e "install poetry version=${_POETRY_VER}"
-    pip install poetry==${_POETRY_VER}
-fi
-
-echo "install neovim"
-cd ~/download
-wget https://download.fastgit.org/neovim/neovim/releases/download/nightly/nvim-linux64.deb
-sudo apt-get install -y ./nvim-linux64.deb
-
 echo "initiallize ezsh"
 git clone https://github.com/jotyGill/ezsh.git /tmp/ezsh
 cd /tmp/ezsh
 ./install.sh -c
-if [ ${_INSTALL_CONDA}=="1" ]; then
-    conda init zsh
+
+
+echo "export conda env"
+echo "# >>> conda initialize >>>
+# !! Contents within this block are managed by 'conda init' !!
+__conda_setup="$('/home/go/miniconda3/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
+if [ $? -eq 0 ]; then
+    eval "$__conda_setup"
+else
+    if [ -f "/home/go/miniconda3/etc/profile.d/conda.sh" ]; then
+        . "/home/go/miniconda3/etc/profile.d/conda.sh"
+    else
+        export PATH="/home/go/miniconda3/bin:$PATH"
+    fi
 fi
+unset __conda_setup
+# <<< conda initialize <<<" >> ~/.zshrc
