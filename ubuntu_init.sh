@@ -1,5 +1,6 @@
 #!/bin/bash
 
+_VERSION="1.0"
 _NEW_USER=go
 _INSTALL_V2RAY=true
 _DEFAULT_V2RAY_CONFIG=~/download/v2ray/config.json
@@ -12,6 +13,8 @@ _INSTALL_CONDA=true
 _CONDA_VER=latest
 _INSTALL_POETRY=true
 _POETRY_VER=1.1.13
+
+echo -e "version: $_VERSION"
 
 echo -e "disable_coredump"
 echo "Set disable_coredump false" | sudo tee -a /etc/sudo.conf

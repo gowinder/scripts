@@ -1,0 +1,27 @@
+{
+  "name": "scripts",
+  "version": "1.0.0",
+  "description": "",
+  "main": ".cz-config.js",
+  "dependencies": {
+    "git-cz": "^4.9.0"
+  },
+  "devDependencies": {
+    "commitizen": "^4.2.5",
+    "cz-customizable": "^6.9.2"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gowinder/scripts.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/gowinder/scripts/issues"
+  },
+  "homepage": "https://github.com/gowinder/scripts#readme"
+}
