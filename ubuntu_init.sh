@@ -4,10 +4,12 @@ _VERSION="1.0"
 _NEW_USER=go
 _INSTALL_V2RAY=true
 _DEFAULT_V2RAY_CONFIG=~/download/v2ray/config.json
+_CHANGE_APT=true
 _ORING_APT_REPO=archive.ubuntu.com
 _APT_MIRROR=mirrors.ustc.edu.cn
 _BASE_APP="language-pack-zh-hans git curl wget aria2 python3 python3-pip zsh jq unzip build-essential"
 _TIMEZONE="Asia/Shanghai"
+_CHANGE_PIP=true
 _PIP3_MIRROR="https://mirrors.bfsu.edu.cn/pypi/web/simple"
 _INSTALL_CONDA=true
 _CONDA_VER=latest
@@ -28,11 +30,11 @@ echo "Set disable_coredump false" | sudo tee -a /etc/sudo.conf
 # su -p ${_NEW_USER}
 
 # whoami
-
-echo -e "change apt repo from ${_ORING_APT_REPO} to ${_APT_MIRROR}"
-_REP="s/${_ORING_APT_REPO}/${_APT_MIRROR}/g"
-sudo sed -i ${_REP} /etc/apt/sources.list
-
+if [ -z $_CHANGE_APT == "true" ]; then  
+  echo -e "change apt repo from ${_ORING_APT_REPO} to ${_APT_MIRROR}"
+  _REP="s/${_ORING_APT_REPO}/${_APT_MIRROR}/g"
+  sudo sed -i ${_REP} /etc/apt/sources.list
+fi
 #sudo -u ${_NEW_USER} bash -c '
 # su - $_NEW_USER << SHT
 
@@ -43,9 +45,9 @@ echo -e "upgrade all"
 
 echo "install common app: ${_BASE_APP}"
 export DEBIAN_FRONTEND=noninteractive
-sudo apt install -y ${_BASE_APP}
+sudo apt install -y ${_BASE_APP} 
 
-echo "set chinese env"
+echo "set chinese env" 
 echo "LANG=\"zh_CN.UTF-8\"
 LANGUAGE=\"zh_CN:zh:en_US:en\"
 " | sudo tee -a /etc/environment
@@ -58,8 +60,10 @@ sudo locale-gen
 echo "install chinese font"
 sudo apt-get install -y fonts-droid-fallback ttf-wqy-zenhei ttf-wqy-microhei fonts-arphic-ukai fonts-arphic-uming
 
-echo "change pip mirror"
-pip config set global.index-url ${_PIP3_MIRROR}
+if [ -z $_CHANGE_PIP == "true"]; then
+  echo "change pip mirror"
+  pip config set global.index-url ${_PIP3_MIRROR}
+fi
 mkdir -p ~/download
 
 echo "install nodejs 14"
