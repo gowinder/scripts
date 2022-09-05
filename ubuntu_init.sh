@@ -30,7 +30,7 @@ echo "Set disable_coredump false" | sudo tee -a /etc/sudo.conf
 # su -p ${_NEW_USER}
 
 # whoami
-if [ -z $_CHANGE_APT == "true" ]; then  
+if [ $_CHANGE_APT == "true" ]; then  
   echo -e "change apt repo from ${_ORING_APT_REPO} to ${_APT_MIRROR}"
   _REP="s/${_ORING_APT_REPO}/${_APT_MIRROR}/g"
   sudo sed -i ${_REP} /etc/apt/sources.list
@@ -60,7 +60,7 @@ sudo locale-gen
 echo "install chinese font"
 sudo apt-get install -y fonts-droid-fallback ttf-wqy-zenhei ttf-wqy-microhei fonts-arphic-ukai fonts-arphic-uming
 
-if [ -z $_CHANGE_PIP == "true"]; then
+if [ $_CHANGE_PIP == "true"]; then
   echo "change pip mirror"
   pip config set global.index-url ${_PIP3_MIRROR}
 fi
