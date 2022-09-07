@@ -3,17 +3,20 @@
 _VERSION="1.0"
 _NEW_USER=go
 _INSTALL_V2RAY=true
-_DEFAULT_V2RAY_CONFIG=~/download/v2ray/config.json
 _CHANGE_APT=true
+_CHANGE_PIP=true
+_INSTALL_CONDA=true
+_INSTALL_POETRY=true
+
+_DOWNLOAD_DIR="/home/$_NEW_USER/download"
+_V2RAY_STAGE="nodejs"   # 1:"nodejs", 2:"docker", 3:"conda"
+_DEFAULT_V2RAY_CONFIG=$_DOWNLOAD_DIR/v2ray/config.json
 _ORING_APT_REPO=archive.ubuntu.com
 _APT_MIRROR=mirrors.ustc.edu.cn
 _BASE_APP="language-pack-zh-hans git curl wget aria2 python3 python3-pip zsh jq unzip build-essential"
 _TIMEZONE="Asia/Shanghai"
-_CHANGE_PIP=true
 _PIP3_MIRROR="https://mirrors.bfsu.edu.cn/pypi/web/simple"
-_INSTALL_CONDA=true
 _CONDA_VER=latest
-_INSTALL_POETRY=true
 _POETRY_VER=1.1.13
 
 echo -e "version: $_VERSION"
@@ -21,7 +24,45 @@ echo -e "version: $_VERSION"
 echo -e "disable_coredump"
 echo "Set disable_coredump false" | sudo tee -a /etc/sudo.conf
 
+echo -e "_DOWNLOAD_DIR: ${_DOWNLOAD_DIR}"
+echo -e "_DEFAULT_V2RAY_CONFIG: $_DEFAULT_V2RAY_CONFIG"
 
+
+start_v2ray()
+{
+if [ ${_INSTALL_V2RAY} == "true" ]; then
+    echo "install v2ray"
+    cd $_DOWNLOAD_DIR
+    wget https://download.fastgit.org/v2fly/v2ray-core/releases/download/v5.0.8/v2ray-linux-64.zip
+    unzip v2ray-linux-64.zip -d v2ray
+    read -p "input config.json file, or just enter for ${_DOWNLOAD_DIR}/v2ray/config.json: " DIR
+    if [ -z $DIR ]; then
+        DIR=$_DEFAULT_V2RAY_CONFIG
+    fi
+    echo -e "will use config file: ${DIR}"
+    cd $_DOWNLOAD_DIR/v2ray
+    nohup ./v2ray run -c $DIR > runoob.log 2>&1 &
+    # echo "install strip-json-comments-cli"
+    # sudo npm install --global strip-json-comments-cli
+    # echo "install hjson first"
+    # pip install hjson
+    # PORT=`hjson -j $DIR | jq '.inbounds[0].port'`
+    read "input v2ray port(default 11080): " PORT
+    #PORT=`strip-json-comments $DIR | jq '.inbounds[0].port'`
+    if [ -z $PORT ]; then
+      PORT=11080
+    fi
+    echo -e "v2ray port is ${PORT}"
+
+    echo -e "export http and https proxy port"
+    export http_proxy=http://localhost:${PORT}
+    export https_proxy=http://localhost:${PORT}
+    echo "test ip using icanhazip"
+    curl https://icanhazip.com
+fi
+}
+
+mkdir -p $_DOWNLOAD_DIR
 # adduser ${_NEW_USER}
 # echo -e "set user: ${_NEW_USER} to group sudo"
 # usermod -aG sudo ${_NEW_USER}
@@ -60,11 +101,14 @@ sudo locale-gen
 echo "install chinese font"
 sudo apt-get install -y fonts-droid-fallback ttf-wqy-zenhei ttf-wqy-microhei fonts-arphic-ukai fonts-arphic-uming
 
-if [ $_CHANGE_PIP == "true"]; then
+if [ $_CHANGE_PIP == "true" ]; then
   echo "change pip mirror"
   pip config set global.index-url ${_PIP3_MIRROR}
 fi
-mkdir -p ~/download
+
+if [ $_V2RAY_STAGE == "nodejs" ]; then
+  start_v2ray
+fi
 
 echo "install nodejs 14"
 curl -fsSL https://deb.nodesource.com/setup_14.x | sudo -E bash -
@@ -73,6 +117,10 @@ sudo apt-get install -y nodejs
 echo "change timezone to ${_TIMEZONE}"
 sudo timedatectl set-timezone ${_TIMEZONE}
 
+
+if [ $_V2RAY_STAGE == "docker" ]; then
+  start_v2ray
+fi
 echo "install docker"
 curl -Ssl https://get.docker.com | sudo sh
 sudo usermod -aG docker ${_NEW_USER}
@@ -80,9 +128,13 @@ sudo usermod -aG docker ${_NEW_USER}
 echo "install docker compose"
 pip install docker-compose
 
+if [ $_V2RAY_STAGE == "conda" ]; then
+  start_v2ray
+fi
+
 if [ ${_INSTALL_CONDA} == "true" ]; then
     echo -e "install conda version=${_CONDA_VER}"
-    cd ~/download
+    cd $_DOWNLOAD_DIR
     wget "https://repo.continuum.io/miniconda/Miniconda3-${_CONDA_VER}-Linux-x86_64.sh"
     bash "Miniconda3-${_CONDA_VER}-Linux-x86_64.sh" -b -p ~/miniconda3
     # rm "Miniconda3-${_CONDA_VER}-Linux-x86_64.sh"
@@ -96,37 +148,10 @@ if [ ${_INSTALL_POETRY} == "true" ]; then
 fi
 
 echo "install neovim"
-cd ~/download
+cd $_DOWNLOAD_DIR 
 wget https://download.fastgit.org/neovim/neovim/releases/download/nightly/nvim-linux64.deb
 sudo apt-get install -y ./nvim-linux64.deb
 
-if [ ${_INSTALL_V2RAY} == "true" ]; then
-    echo "install v2ray"
-    cd download
-    wget https://download.fastgit.org/v2fly/v2ray-core/releases/download/v5.0.8/v2ray-linux-64.zip
-    unzip v2ray-linux-64.zip -d v2ray
-    read -p "input config.json file, or just enter for ~/download/v2ray/config.json" DIR
-    if [ -z $DIR ]; then
-        DIR=$_DEFAULT_V2RAY_CONFIG
-    fi
-    echo -e "will use config file: ${DIR}"
-    cd ~/download/v2ray
-    nohup ./v2ray run -c $DIR > runoob.log 2>&1 &
-    echo "install strip-json-comments-cli"
-    sudo npm install --global strip-json-comments-cli
-    # echo "install hjson first"
-    # pip install hjson
-    # PORT=`hjson -j $DIR | jq '.inbounds[0].port'`
-    echo "get v2ray port"
-    PORT=`strip-json-comments $DIR | jq '.inbounds[0].port'`
-    echo -e "v2ray port is ${PORT}"
-
-    echo -e "export http and https proxy port"
-    export http_proxy=http://localhost:${PORT}
-    export https_proxy=http://localhost:${PORT}
-    echo "test ip using icanhazip"
-    curl https://icanhazip.com
-fi
 
 cd ~
 
