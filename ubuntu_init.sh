@@ -46,6 +46,9 @@ if [ ${_INSTALL_V2RAY} == "true" ]; then
     # echo "install hjson first"
     # pip install hjson
     # PORT=`hjson -j $DIR | jq '.inbounds[0].port'`
+    echo "sleep 5 seconds for v2ray to start up"
+    echo "read v2ray log"
+    tail $_DOWNLOAD_DIR/v2ray/runoob.log
     read "input v2ray port(default 11080): " PORT
     #PORT=`strip-json-comments $DIR | jq '.inbounds[0].port'`
     if [ -z $PORT ]; then
@@ -230,6 +233,101 @@ unset __conda_setup
 EOF
 }
 
+function install_rust()
+{
+  echo "install rust"
+  curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sudo sh
+  cat << EOF >> ~/.zshrc
+export PATH="$PATH:$HOME/.cargo/env"
+EOF
+
+}
+
+function install_bat()
+{
+  echo "install bat"
+  sudo apt install -y bat
+  mkdir -p ~/.local/bin
+  ln -s /usr/bin/batcat ~/.local/bin/bat
+}
+
+function install_lsd()
+{
+  echo "install lsd"
+  cd $_DOWNLOAD_DIR
+  wget https://github.com/Peltoche/lsd/releases/download/0.23.0/lsd_0.23.0_amd64.deb
+  sudo dpkg -i ./lsd_0.23.0_amd64.deb
+  cat << EOF >> ~/.zshrc
+alias ls="lsd -alh"
+EOF
+}
+
+function install_delta()
+{
+  echo "install delta"
+  sudo apt-get install -y git-delta
+  cat << EOF >> ~/.gitconfig
+[core]
+    pager = delta
+
+[interactive]
+    diffFilter = delta --color-only
+[add.interactive]
+    useBuiltin = false # required for git 2.37.0
+
+[delta]
+    navigate = true    # use n and N to move between diff sections
+    light = false      # set to true if you're in a terminal w/ a light background color (e.g. the default macOS terminal)
+
+[merge]
+    conflictstyle = diff3
+
+[diff]
+    colorMoved = default
+EOF
+
+}
+
+function install_fd()
+{
+  echo "install fd"
+  sudo apt install -y fd-find
+  ln -s $(which fdfind) ~/.local/bin/fd
+}
+
+function install_du_dust()
+{
+  echo "install dust"
+  cargo install du-dust
+}
+
+function install_ripgrep()
+{
+  echo "install ripgrep"
+  sudo apt install -y ripgrep
+}
+
+function install_cheat()
+{
+  echo "install cheat"
+  cd /tmp \
+  && wget https://github.com/cheat/cheat/releases/download/4.3.3/cheat-linux-amd64.gz \
+  && gunzip cheat-linux-amd64.gz \
+  && chmod +x cheat-linux-amd64 \
+  && sudo mv cheat-linux-amd64 /usr/local/bin/cheat
+}
+
+function install_tldr()
+{
+  echo "install tldr"
+  npm install -g tldr
+}
+
+function install_lvim()
+{
+  bash <(curl -s https://raw.githubusercontent.com/lunarvim/lunarvim/master/utils/installer/install.sh)
+  
+}
 
 function do_main()
 {
@@ -257,8 +355,25 @@ function do_main()
 
   install_neovim
 
-  install_ezsh
+  install_rust
+  
+  install_bat
+  
+  install_lsd
 
+  install_delta
+
+  install_fd
+
+  install_du_dust
+
+  install_ripgrep
+
+  install_cheat
+
+  install_tldr
+  
+  install_ezsh
 }
 
 
