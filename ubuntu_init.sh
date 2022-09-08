@@ -1,14 +1,13 @@
 #!/bin/bash
 
-_VERSION="1.0"
-_NEW_USER=go
+_VERSION="1.1"
 _INSTALL_V2RAY=true
 _CHANGE_APT=true
 _CHANGE_PIP=true
 _INSTALL_CONDA=true
 _INSTALL_POETRY=true
 
-_DOWNLOAD_DIR="/home/$_NEW_USER/download"
+_DOWNLOAD_DIR="/home/$USER/download"
 _V2RAY_STAGE="nodejs"   # 1:"nodejs", 2:"docker", 3:"conda"
 _DEFAULT_V2RAY_CONFIG=$_DOWNLOAD_DIR/v2ray/config.json
 _ORING_APT_REPO=archive.ubuntu.com
@@ -28,7 +27,7 @@ echo -e "_DOWNLOAD_DIR: ${_DOWNLOAD_DIR}"
 echo -e "_DEFAULT_V2RAY_CONFIG: $_DEFAULT_V2RAY_CONFIG"
 
 
-start_v2ray()
+function start_v2ray()
 {
 if [ ${_INSTALL_V2RAY} == "true" ]; then
     echo "install v2ray"
@@ -63,10 +62,9 @@ fi
 }
 
 
-init()
+function init()
 {
   mkdir -p $_DOWNLOAD_DIR
-
 }
 
 # adduser ${_NEW_USER}
@@ -77,7 +75,7 @@ init()
 # su -p ${_NEW_USER}
 
 # whoami
-change_apt()
+function change_apt()
 {
   if [ $_CHANGE_APT == "true" ]; then  
     echo -e "change apt repo from ${_ORING_APT_REPO} to ${_APT_MIRROR}"
@@ -86,7 +84,7 @@ change_apt()
   fi
 }
 
-update_apt()
+function update_apt()
 {
   echo -e "update apt repo"
   sudo apt update
@@ -94,30 +92,29 @@ update_apt()
 }
 # sudo apt upgrade -y
 
-apt_install_base()
+function apt_install_base()
 {
 echo "install common app: ${_BASE_APP}"
 export DEBIAN_FRONTEND=noninteractive
 sudo apt install -y ${_BASE_APP} 
 }
 
-set_chinese_env()
+function set_chinese_env()
 {
   echo "set chinese env" 
-  echo "LANG=\"zh_CN.UTF-8\"
+  echo "LANG=\"zh_CN.UTF-8\" \
   LANGUAGE=\"zh_CN:zh:en_US:en\"
   " | sudo tee -a /etc/environment
-  sudo echo "en_US.UTF-8 UTF-8
-  zh_CN.UTF-8 UTF-8
-  zh_CN.GBK GBK
-  zh_CN GB2312
-  " | sudo tee -a /var/lib/locales/supported.d/local
+  sudo echo "en_US.UTF-8 UTF-8 \
+  zh_CN.UTF-8 UTF-8 \
+  zh_CN.GBK GBK \
+  zh_CN GB2312" | sudo tee -a /var/lib/locales/supported.d/local
   sudo locale-gen
   echo "install chinese font"
   sudo apt-get install -y fonts-droid-fallback ttf-wqy-zenhei ttf-wqy-microhei fonts-arphic-ukai fonts-arphic-uming
 }
 
-change_pip_mirror()
+function change_pip_mirror()
 {
   if [ $_CHANGE_PIP == "true" ]; then
     echo "change pip mirror"
@@ -129,20 +126,20 @@ change_pip_mirror()
   fi
 }
 
-install_nodejs()
+function install_nodejs()
 {
   echo "install nodejs 14"
   curl -fsSL https://deb.nodesource.com/setup_14.x | sudo -E bash -
   sudo apt-get install -y nodejs
 }
 
-set_timezone()
+function set_timezone()
 {
   echo "change timezone to ${_TIMEZONE}"
   sudo timedatectl set-timezone ${_TIMEZONE}
 }
 
-install_docker()
+function install_docker()
 {
   if [ $_V2RAY_STAGE == "docker" ]; then
     start_v2ray
@@ -155,7 +152,7 @@ install_docker()
   pip install docker-compose
 }
 
-install_conda()
+function install_conda()
 {
   if [ $_V2RAY_STAGE == "conda" ]; then
     start_v2ray
@@ -172,7 +169,7 @@ install_conda()
   fi
 }
 
-install_poetry()
+function install_poetry()
 {
   if [ ${_INSTALL_POETRY} == "true" ]; then
       echo -e "install poetry version=${_POETRY_VER}"
@@ -181,7 +178,7 @@ install_poetry()
 }
 
 
-install_neovim()
+function install_neovim()
 {
   echo "install neovim"
   cd $_DOWNLOAD_DIR 
@@ -189,76 +186,81 @@ install_neovim()
   sudo apt-get install -y ./nvim-linux64.deb
 }
 
-install_ezsh()
+function install_ezsh()
 {
   echo "initiallize ezsh"
   git clone https://github.com/jotyGill/ezsh.git /tmp/ezsh
   cd /tmp/ezsh
   ./install.sh -c
 
-  echo "LANG=zh_CN.UTF-8
-  LANGUAGE=zh_CN:en_US:en
-  LC_CTYPE="zh_CN.UTF-8"
-  LC_NUMERIC=zh_CN.UTF-8
-  LC_TIME=zh_CN.UTF-8
-  LC_COLLATE="zh_CN.UTF-8"
-  LC_MONETARY=zh_CN.UTF-8
-  LC_MESSAGES="zh_CN.UTF-8"
-  LC_PAPER=zh_CN.UTF-8
-  LC_NAME=zh_CN.UTF-8
-  LC_ADDRESS=zh_CN.UTF-8
-  LC_TELEPHONE=zh_CN.UTF-8
-  LC_MEASUREMENT=zh_CN.UTF-8
-  LC_IDENTIFICATION=zh_CN.UTF-8
-  LC_ALL=" >> ~/.zshrc
+  cat << EOF >> ~/.zshrc
+LANG=zh_CN.UTF-8
+LANGUAGE=zh_CN:en_US:en
+LC_CTYPE="zh_CN.UTF-8" 
+LC_NUMERIC=zh_CN.UTF-8
+LC_TIME=zh_CN.UTF-8
+LC_COLLATE="zh_CN.UTF-8"
+LC_MONETARY=zh_CN.UTF-8
+LC_MESSAGES="zh_CN.UTF-8"
+LC_PAPER=zh_CN.UTF-8
+LC_NAME=zh_CN.UTF-8
+LC_ADDRESS=zh_CN.UTF-8
+LC_TELEPHONE=zh_CN.UTF-8
+LC_MEASUREMENT=zh_CN.UTF-8
+LC_IDENTIFICATION=zh_CN.UTF-8
+LC_ALL=
+EOF
 
   echo "export conda env"
-  echo "# >>> conda initialize >>>
-  # !! Contents within this block are managed by 'conda init' !!
-  __conda_setup="$('/home/go/miniconda3/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
-  if [ $? -eq 0 ]; then
-      eval "$__conda_setup"
-  else
-      if [ -f "/home/go/miniconda3/etc/profile.d/conda.sh" ]; then
-          . "/home/go/miniconda3/etc/profile.d/conda.sh"
-      else
-          export PATH="/home/go/miniconda3/bin:$PATH"
-      fi
-  fi
-  unset __conda_setup
-  # <<< conda initialize <<<" >> ~/.zshrc
+  cat << EOF >> ~/.zshrc
+# >>> conda initialize >>>
+# !! Contents within this block are managed by 'conda init' !!
+__conda_setup="$('/home/go/miniconda3/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
+if [ $? -eq 0 ]; then
+    eval "$__conda_setup"
+else
+    if [ -f "/home/go/miniconda3/etc/profile.d/conda.sh" ]; then
+        . "/home/go/miniconda3/etc/profile.d/conda.sh"
+    else
+        export PATH="/home/go/miniconda3/bin:$PATH"
+    fi
+fi
+unset __conda_setup
+# <<< conda initialize <<<
+EOF
 }
 
 
-main()
+function do_main()
 {
-  init()
+  init
 
-  change_apt()
+  change_apt
 
-  update_apt()
+  update_apt
 
-  apt_install_base()
+  apt_install_base
 
-  set_chinese_env()
+  set_chinese_env
 
-  change_pip_mirror()
+  change_pip_mirror
 
-  install_nodejs()
+  install_nodejs
 
-  set_timezzone()
+  set_timezzone
 
-  install_docker()
+  install_docker
 
-  install_conda()
+  install_conda
 
-  install_poetry()
+  install_poetry
 
-  install_neovim()
+  install_neovim
 
-  install_ezsh()
+  install_ezsh
 
 }
 
 
-main()
+do_main
+
