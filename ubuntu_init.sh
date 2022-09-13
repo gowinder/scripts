@@ -88,6 +88,11 @@ function init()
   mkdir -p $_DOWNLOAD_DIR
 }
 
+function config()
+{
+
+}
+
 # adduser ${_NEW_USER}
 # echo -e "set user: ${_NEW_USER} to group sudo"
 # usermod -aG sudo ${_NEW_USER}
@@ -339,6 +344,14 @@ function install_lvim()
   wget https://raw.githubusercontent.com/gowinder/scripts/main/lvim/config.lua -O ~/.config/lvim/config.lua 
 }
 
+function install_cz()
+{
+  npm install -g commitizen
+  npm install -g cz-conventional-changelog
+  npm install -g cz-conventional-changelog
+  echo '{ "path": "cz-customizable" }' > ~/.czrc
+}
+
 function update_env()
 {
   if [ $_INSTALL_LSD == "true" ]; then
@@ -396,6 +409,8 @@ function do_main()
   install_lvim
 
   install_ezsh
+
+  install_cz
 
   update_env
 }
