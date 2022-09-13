@@ -6,6 +6,7 @@ _CHANGE_APT=true
 _CHANGE_PIP=true
 _INSTALL_CONDA=true
 _INSTALL_POETRY=true
+_INSTALL_LSD=true
 
 _DOWNLOAD_DIR="/home/$USER/download"
 _V2RAY_STAGE="nodejs"   # 1:"nodejs", 2:"docker", 3:"conda"
@@ -261,15 +262,13 @@ function install_bat()
 
 function install_lsd()
 {
-  _echo "download lsd"
-  cd $_DOWNLOAD_DIR
-  wget https://github.com/Peltoche/lsd/releases/download/0.23.0/lsd_0.23.0_amd64.deb
-  _echo "install lsd"
-  sudo dpkg -i ./lsd_0.23.0_amd64.deb
-  _echo "add lsd alias"
-  cat << EOF >> ~/.zshrc
-alias ls="lsd -alh"
-EOF
+  if [ $_INSTALL_LSD == "true" ]; then
+    _echo "download lsd"
+    cd $_DOWNLOAD_DIR
+    wget https://github.com/Peltoche/lsd/releases/download/0.23.0/lsd_0.23.0_amd64.deb
+    _echo "install lsd"
+    sudo dpkg -i ./lsd_0.23.0_amd64.deb
+  fi
 }
 
 function install_delta()
@@ -340,6 +339,16 @@ function install_lvim()
   wget https://raw.githubusercontent.com/gowinder/scripts/main/lvim/config.lua -O ~/.config/lvim/config.lua 
 }
 
+function update_env()
+{
+  if [ $_INSTALL_LSD == "true" ]; then
+      _echo "add lsd alias"
+  cat << EOF >> ~/.zshrc
+alias ls="lsd -alh"
+EOF
+  fi
+}
+
 function do_main()
 {
   init
@@ -387,6 +396,8 @@ function do_main()
   install_lvim
 
   install_ezsh
+
+  update_env
 }
 
 
