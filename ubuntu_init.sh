@@ -90,7 +90,23 @@ function init()
 
 function config()
 {
+  read -p "install v2ray and set local proxy(y/n)? default y: " _ANS 
+  if [ $_ANS == "n" ]; then
+    _INSTALL_V2RAY="false"
+  fi
 
+  read -p "all default(y/n)? this will change apt mirror and pip mirror, default y: " _ANS
+  if [ $_ANS == "n" ]; then
+    read -p "change apt mirror to $_APT_MIRROR (y/n)? default y: " _ANS
+    if [ $_ANS == "n" ]; then
+      _CHANGE_APT="false"
+    fi
+
+    read -p "change pip mirror to $_PIP3_MIRROR (y/n)? default y:" _ANS
+    if [ $_ANS == "n" ]; then
+      _CHANGE_PIP="false"
+    fi
+  fi
 }
 
 # adduser ${_NEW_USER}
@@ -365,6 +381,8 @@ EOF
 function do_main()
 {
   init
+
+  config
 
   change_apt
 
