@@ -362,9 +362,9 @@ function install_lvim()
 
 function install_cz()
 {
-  npm install -g commitizen
-  npm install -g cz-conventional-changelog
-  npm install -g cz-conventional-changelog
+  sudo npm install -g commitizen
+  sudo npm install -g cz-conventional-changelog
+  sudo npm install -g cz-conventional-changelog
   echo '{ "path": "cz-customizable" }' > ~/.czrc
 }
 
