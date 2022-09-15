@@ -138,7 +138,7 @@ function apt_install_base()
 {
 _echo "install common app: ${_BASE_APP}"
 export DEBIAN_FRONTEND=noninteractive
-sudo apt install -y ${_BASE_APP} 
+DEBIAN_FRONTEND=nointeractive sudo apt install -y ${_BASE_APP} 
 }
 
 function set_chinese_env()
@@ -192,6 +192,9 @@ function install_docker()
 
   _echo "install docker compose"
   pip install docker-compose
+
+  _echo "install lazy docker "
+  curl https://raw.githubusercontent.com/jesseduffield/lazydocker/master/scripts/install_update_linux.sh | bash
 }
 
 function install_conda()
