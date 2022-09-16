@@ -1,6 +1,6 @@
 #!/bin/bash
 
-_VERSION="1.1"
+_VERSION="1.2"
 _INSTALL_V2RAY=true
 _CHANGE_APT=true
 _CHANGE_PIP=true
@@ -227,7 +227,7 @@ function install_neovim()
 {
   _echo "install neovim"
   _echo "uninstall old version first"
-  sudo apt-get autoremove neovim
+  sudo apt-get -y autoremove neovim
   cd $_DOWNLOAD_DIR 
   wget https://download.fastgit.org/neovim/neovim/releases/download/nightly/nvim-linux64.deb
   sudo apt-get install -y ./nvim-linux64.deb
