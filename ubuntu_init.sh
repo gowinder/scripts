@@ -13,7 +13,7 @@ _V2RAY_STAGE="nodejs"   # 1:"nodejs", 2:"docker", 3:"conda"
 _DEFAULT_V2RAY_CONFIG=$_DOWNLOAD_DIR/v2ray/config.json
 _ORING_APT_REPO=archive.ubuntu.com
 _APT_MIRROR=mirrors.ustc.edu.cn
-_BASE_APP="language-pack-zh-hans git curl wget aria2 python3 python3-pip zsh jq unzip build-essential htop iftop git-flow libssl-dev pkg-config"
+_BASE_APP="language-pack-zh-hans git curl wget aria2 python3 python3-pip zsh jq unzip build-essential htop iftop git-flow libssl-dev pkg-config dnsutils inetutils-ping"
 _TIMEZONE="Asia/Shanghai"
 _PIP3_MIRROR="https://mirrors.bfsu.edu.cn/pypi/web/simple"
 _CONDA_VER=latest
@@ -138,7 +138,7 @@ function apt_install_base()
 {
 _echo "install common app: ${_BASE_APP}"
 export DEBIAN_FRONTEND=noninteractive
-DEBIAN_FRONTEND=nointeractive sudo apt install -y ${_BASE_APP} 
+DEBIAN_FRONTEND=nointeractive sudo DEBIAN_FRONTEND=nointeractive apt install -y ${_BASE_APP} 
 }
 
 function set_chinese_env()
