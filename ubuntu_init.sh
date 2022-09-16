@@ -13,7 +13,7 @@ _V2RAY_STAGE="nodejs"   # 1:"nodejs", 2:"docker", 3:"conda"
 _DEFAULT_V2RAY_CONFIG=$_DOWNLOAD_DIR/v2ray/config.json
 _ORING_APT_REPO=archive.ubuntu.com
 _APT_MIRROR=mirrors.ustc.edu.cn
-_BASE_APP="language-pack-zh-hans git curl wget aria2 python3 python3-pip zsh jq unzip build-essential htop iftop git-flow"
+_BASE_APP="language-pack-zh-hans git curl wget aria2 python3 python3-pip zsh jq unzip build-essential htop iftop git-flow libssl-dev pkg-config"
 _TIMEZONE="Asia/Shanghai"
 _PIP3_MIRROR="https://mirrors.bfsu.edu.cn/pypi/web/simple"
 _CONDA_VER=latest
@@ -88,6 +88,27 @@ function init()
   mkdir -p $_DOWNLOAD_DIR
 }
 
+function config()
+{
+  read -p "install v2ray and set local proxy(y/n)? default y: " _ANS 
+  if [ $_ANS == "n" ]; then
+    _INSTALL_V2RAY="false"
+  fi
+
+  read -p "all default(y/n)? this will change apt mirror and pip mirror, default y: " _ANS
+  if [ $_ANS == "n" ]; then
+    read -p "change apt mirror to $_APT_MIRROR (y/n)? default y: " _ANS
+    if [ $_ANS == "n" ]; then
+      _CHANGE_APT="false"
+    fi
+
+    read -p "change pip mirror to $_PIP3_MIRROR (y/n)? default y:" _ANS
+    if [ $_ANS == "n" ]; then
+      _CHANGE_PIP="false"
+    fi
+  fi
+}
+
 # adduser ${_NEW_USER}
 # echo -e "set user: ${_NEW_USER} to group sudo"
 # usermod -aG sudo ${_NEW_USER}
@@ -117,7 +138,7 @@ function apt_install_base()
 {
 _echo "install common app: ${_BASE_APP}"
 export DEBIAN_FRONTEND=noninteractive
-sudo apt install -y ${_BASE_APP} 
+DEBIAN_FRONTEND=nointeractive sudo apt install -y ${_BASE_APP} 
 }
 
 function set_chinese_env()
@@ -167,10 +188,13 @@ function install_docker()
   fi
   _echo "install docker"
   curl -Ssl https://get.docker.com | sudo sh
-  sudo usermod -aG docker ${_NEW_USER}
+  sudo usermod -aG docker $USER
 
   _echo "install docker compose"
   pip install docker-compose
+
+  _echo "install lazy docker "
+  curl https://raw.githubusercontent.com/jesseduffield/lazydocker/master/scripts/install_update_linux.sh | bash
 }
 
 function install_conda()
@@ -339,6 +363,35 @@ function install_lvim()
   wget https://raw.githubusercontent.com/gowinder/scripts/main/lvim/config.lua -O ~/.config/lvim/config.lua 
 }
 
+function install_cz()
+{
+  sudo npm install -g commitizen
+  sudo npm install -g cz-conventional-changelog
+  sudo npm install -g cz-conventional-changelog
+  echo '{ "path": "cz-customizable" }' > ~/.czrc
+}
+
+function install_dog()
+{
+  _echo "install dog"
+  mkdir -p /tmp
+  cd /tmp/
+  git clone https://github.com/ogham/dog.git /tmp/dog
+  cd /tmp/dog
+  cargo update
+  cargo build --release
+  sudo cp target/release/dog /usr/local/bin
+}
+
+function install_sss()
+{
+  mkdir -p /tmp 
+  cd /tmp 
+  wget https://raw.githubusercontent.com/gnos-project/gnos-sockets/master/sss 
+  chmod +x sss
+  mv sss /usr/local/bin/
+}
+
 function update_env()
 {
   if [ $_INSTALL_LSD == "true" ]; then
@@ -352,6 +405,8 @@ EOF
 function do_main()
 {
   init
+
+  config
 
   change_apt
 
@@ -393,9 +448,15 @@ function do_main()
 
   install_tldr
 
+  install_dog
+
+  install_sss
+
   install_lvim
 
   install_ezsh
+
+  install_cz
 
   update_env
 }
