@@ -226,6 +226,8 @@ function install_poetry()
 function install_neovim()
 {
   _echo "install neovim"
+  _echo "uninstall old version first"
+  sudo apt-get autoremove neovim
   cd $_DOWNLOAD_DIR 
   wget https://download.fastgit.org/neovim/neovim/releases/download/nightly/nvim-linux64.deb
   sudo apt-get install -y ./nvim-linux64.deb
