@@ -188,7 +188,7 @@ function install_docker()
   fi
   _echo "install docker"
   curl -Ssl https://get.docker.com | sudo sh
-  sudo usermod -aG docker ${_NEW_USER}
+  sudo usermod -aG docker $USER
 
   _echo "install docker compose"
   pip install docker-compose
