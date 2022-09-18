@@ -394,6 +394,13 @@ function install_sss()
   mv sss /usr/local/bin/
 }
 
+function install_duf()
+{
+  cd /tmp
+  wget https://github.com/muesli/duf/releases/download/v0.8.0/duf_0.8.0_linux_amd64.deb 
+  sudo dpkg -i ./duf_0.8.0_linux_amd64.deb
+}
+
 function update_env()
 {
   if [ $_INSTALL_LSD == "true" ]; then
@@ -453,6 +460,8 @@ function do_main()
   install_dog
 
   install_sss
+
+  install_duf
 
   install_lvim
 
