@@ -401,6 +401,13 @@ function install_duf()
   sudo dpkg -i ./duf_0.8.0_linux_amd64.deb
 }
 
+function install_glow()
+{
+  _echo "install glow"
+  echo 'deb [trusted=yes] https://repo.charm.sh/apt/ /' | sudo tee /etc/apt/sources.list.d/charm.list
+  sudo apt update && sudo apt install -y glow
+}
+
 function update_env()
 {
   if [ $_INSTALL_LSD == "true" ]; then
@@ -462,6 +469,8 @@ function do_main()
   install_sss
 
   install_duf
+
+  install_glow
 
   install_lvim
 
