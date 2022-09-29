@@ -13,7 +13,7 @@ _V2RAY_STAGE="nodejs"   # 1:"nodejs", 2:"docker", 3:"conda"
 _DEFAULT_V2RAY_CONFIG=$_DOWNLOAD_DIR/v2ray/config.json
 _ORING_APT_REPO=archive.ubuntu.com
 _APT_MIRROR=mirrors.ustc.edu.cn
-_BASE_APP="language-pack-zh-hans git curl wget aria2 python3 python3-pip zsh jq unzip build-essential htop iftop git-flow libssl-dev pkg-config"
+_BASE_APP="language-pack-zh-hans git curl wget aria2 python3 python3-pip zsh jq unzip build-essential htop iftop git-flow libssl-dev pkg-config dnsutils inetutils-ping"
 _TIMEZONE="Asia/Shanghai"
 _PIP3_MIRROR="https://mirrors.bfsu.edu.cn/pypi/web/simple"
 _CONDA_VER=latest
@@ -138,7 +138,7 @@ function apt_install_base()
 {
 _echo "install common app: ${_BASE_APP}"
 export DEBIAN_FRONTEND=noninteractive
-DEBIAN_FRONTEND=nointeractive sudo apt install -y ${_BASE_APP} 
+DEBIAN_FRONTEND=nointeractive sudo DEBIAN_FRONTEND=nointeractive apt install -y ${_BASE_APP} 
 }
 
 function set_chinese_env()
@@ -394,12 +394,33 @@ function install_sss()
   mv sss /usr/local/bin/
 }
 
+function install_duf()
+{
+  cd /tmp
+  wget https://github.com/muesli/duf/releases/download/v0.8.0/duf_0.8.0_linux_amd64.deb 
+  sudo dpkg -i ./duf_0.8.0_linux_amd64.deb
+}
+
+function install_glow()
+{
+  _echo "install glow"
+  echo 'deb [trusted=yes] https://repo.charm.sh/apt/ /' | sudo tee /etc/apt/sources.list.d/charm.list
+  sudo apt update && sudo apt install -y glow
+}
+
+function install_zoxide()
+{
+  _echo "install zoxide"
+  sudo apt install -y zoxide
+}
+
 function update_env()
 {
   if [ $_INSTALL_LSD == "true" ]; then
       _echo "add lsd alias"
   cat << EOF >> ~/.zshrc
 alias ls="lsd -alh"
+eval "$(zoxide init zsh)"
 EOF
   fi
 }
@@ -453,6 +474,12 @@ function do_main()
   install_dog
 
   install_sss
+
+  install_duf
+
+  install_glow
+
+  install_zoxide
 
   install_lvim
 
