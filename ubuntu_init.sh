@@ -408,6 +408,12 @@ function install_glow()
   sudo apt update && sudo apt install -y glow
 }
 
+function install_zoxide()
+{
+  _echo "install zoxide"
+  sudo apt install -y zoxide
+}
+
 function update_env()
 {
   if [ $_INSTALL_LSD == "true" ]; then
@@ -471,6 +477,8 @@ function do_main()
   install_duf
 
   install_glow
+
+  install_zoxide
 
   install_lvim
 
