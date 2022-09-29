@@ -433,6 +433,12 @@ function install_gping()
   carge install gping
 }
 
+function install_fkill()
+{
+  _echo "install fkill"
+  sudo npm install -g fkill
+}
+
 function update_env()
 {
   if [ $_INSTALL_LSD == "true" ]; then
@@ -501,6 +507,8 @@ function do_main()
   install_zoxide
   
   install_gtop
+
+  install_fkill
 
   install_lvim
 
