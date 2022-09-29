@@ -420,6 +420,7 @@ function update_env()
       _echo "add lsd alias"
   cat << EOF >> ~/.zshrc
 alias ls="lsd -alh"
+eval "$(zoxide init zsh)"
 EOF
   fi
 }
