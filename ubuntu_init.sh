@@ -414,6 +414,25 @@ function install_zoxide()
   sudo apt install -y zoxide
 }
 
+function install_gtop()
+{
+  _echo "install gtop"
+  sudo npm install -g gtop
+}
+
+function install_bandwitch()
+{
+  _echo "install bandwitch"
+  cargo install bandwitch
+  sudo ln -s $(which bandwhich) /usr/sbin/bandwhich
+}
+
+function install_gping()
+{
+  _echo "install gping"
+  carge install gping
+}
+
 function update_env()
 {
   if [ $_INSTALL_LSD == "true" ]; then
@@ -480,6 +499,8 @@ function do_main()
   install_glow
 
   install_zoxide
+  
+  install_gtop
 
   install_lvim
 
