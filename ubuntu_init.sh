@@ -420,10 +420,10 @@ function install_gtop()
   sudo npm install -g gtop
 }
 
-function install_bandwitch()
+function install_bandwhich()
 {
-  _echo "install bandwitch"
-  cargo install bandwitch
+  _echo "install bandwhich"
+  cargo install bandwhich
   sudo ln -s $(which bandwhich) /usr/sbin/bandwhich
 }
 
