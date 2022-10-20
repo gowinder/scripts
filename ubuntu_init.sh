@@ -1,6 +1,6 @@
 #!/bin/bash
 
-_VERSION="1.4"
+_VERSION="1.6"
 _INSTALL_V2RAY=true
 _CHANGE_APT=true
 _CHANGE_PIP=true
@@ -272,8 +272,8 @@ EOF
 function install_rust()
 {
   _echo "install rust"
-  #curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sudo sh
-  sudo apt-get install -y rust-all
+  curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sudo sh
+  # sudo apt-get install -y rust-all
 
 }
 
@@ -414,6 +414,31 @@ function install_zoxide()
   sudo apt install -y zoxide
 }
 
+function install_gtop()
+{
+  _echo "install gtop"
+  sudo npm install -g gtop
+}
+
+function install_bandwhich()
+{
+  _echo "install bandwhich"
+  cargo install bandwhich
+  sudo ln -s $(which bandwhich) /usr/sbin/bandwhich
+}
+
+function install_gping()
+{
+  _echo "install gping"
+  carge install gping
+}
+
+function install_fkill()
+{
+  _echo "install fkill"
+  sudo npm install -g fkill
+}
+
 function update_env()
 {
   if [ $_INSTALL_LSD == "true" ]; then
@@ -480,6 +505,10 @@ function do_main()
   install_glow
 
   install_zoxide
+  
+  install_gtop
+
+  install_fkill
 
   install_lvim
 
