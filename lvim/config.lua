@@ -188,6 +188,7 @@ lvim.plugins = {
     cmd = "TroubleToggle",
   },
   { "fedepujol/move.nvim" },
+  { "junegunn/fzf" },
 }
 
 -- Autocommands (https://neovim.io/doc/user/autocmd.html)
