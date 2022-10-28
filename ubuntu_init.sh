@@ -1,6 +1,6 @@
 #!/bin/bash
 
-_VERSION="1.6"
+_VERSION="1.7"
 _INSTALL_V2RAY=true
 _CHANGE_APT=true
 _CHANGE_PIP=true
