@@ -229,7 +229,7 @@ function install_neovim()
   _echo "uninstall old version first"
   sudo apt-get -y autoremove neovim
   cd $_DOWNLOAD_DIR 
-  wget https://download.fastgit.org/neovim/neovim/releases/download/nightly/nvim-linux64.deb
+  wget https://github.com/neovim/neovim/releases/download/nightly/nvim-linux64.deb
   sudo apt-get install -y ./nvim-linux64.deb
 }
 
