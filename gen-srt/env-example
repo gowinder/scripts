@@ -1,0 +1,8 @@
+WHISPER_PATH="/Users/gowinder/code/whisper.cpp/main"
+WHISPER_LANGUAGE="japanese"
+WHISPER_MODEL="/User/gowinder/code/whisper.cpp/models/ggml-small.bin"
+WHISPER_MODEL="/Users/gowinder/code/whisper.cpp/models/ggml-small.bin"
+TRANSLATOR_PATH="/Users/gowinder/code/chatgpt-subtitle-translator"
+TRANSLATOR_TO_LANGUAGE="Chinese"
+FFMPEG_THREAD=8
+#TRANSLATOR_STREAM="--stream"
