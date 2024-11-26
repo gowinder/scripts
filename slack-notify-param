@@ -1,7 +1,7 @@
 #!/bin/bash
 ip=$(echo "$SSH_CONNECTION" | cut -d " " -f 1)
 date=$(date +"%e %b %Y, %a %r")
-name=$(whoami)
+name=$(echo "$PAM_USER")
 
 /usr/bin/curl -sS \
     -X POST \
