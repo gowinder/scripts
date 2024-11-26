@@ -1,0 +1,10 @@
+#!/bin/bash
+ip=$(echo "$SSH_CONNECTION" | cut -d " " -f 1)
+date=$(date +"%e %b %Y, %a %r")
+name=$(whoami)
+
+/usr/bin/curl -sS \
+    -X POST \
+    -H 'Content-type: application/json' \
+    --data "{\"attachments\":[{\"pretext\":\"$hostname login - $name -$ip -$date \"}]}" \
+    https://hooks.slack.com/services/xxx/yyy/zzz
